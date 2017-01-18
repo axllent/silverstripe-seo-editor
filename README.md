@@ -1,12 +1,12 @@
 # SilverStripe SEO Editor
 
-SEO Editor interface to allow easy editing of SEO Title and MetaDescriptions for pages within a ModelAdmin interface.
+SEO Editor interface to allow easy editing of page Titles and Meta Descriptions for pages within a ModelAdmin interface.
 
 Edit inline, or download a CSV export and import changes.
 
 This module is based on the original [littlegiant/silverstripe-seo-editor](https://github.com/littlegiant/silverstripe-seo-editor),
-however adapted to suit different requirements. This module focuses on the default `Title` and `MetaDescription` fields, and
-takes into consideration the current MenuTitle field (as not to change it with a change to the Title).
+however adapted to suit different requirements. This module focuses on the standard `Title` and `MetaDescription` fields, and
+takes into consideration the current `MenuTitle` field (as not to change the menu title when you change the page title).
 
 ![SilverStripe SEO Editor](https://raw.github.com/axllent/silverstripe-seo-editor/master/images/preview.jpg)
 
