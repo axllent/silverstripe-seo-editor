@@ -1,8 +1,28 @@
 (function($) {
 
+    function updateCounter(inpt) {
+
+    }
+
     $.entwine('ss', function($) {
 
+        /* counter */
+        $("body").append($('<div id="SeoEditorCharCounter">hahaha</div>').hide());
+
         $('.ss-seo-editor .ss-gridfield-item input, .ss-seo-editor .ss-gridfield-item textarea').entwine({
+
+            onkeyup: function() {
+                $('#SeoEditorCharCounter').html($(this).val().length);
+            },
+
+            onfocusin: function() {
+                $('#SeoEditorCharCounter').show();
+                $('#SeoEditorCharCounter').html($(this).val().length);
+            },
+
+            onfocusout: function() {
+                $('#SeoEditorCharCounter').hide();
+            },
 
             onchange: function() {
 

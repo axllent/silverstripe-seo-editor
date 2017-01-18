@@ -29,7 +29,9 @@
 	border: 1px solid #727272;
 	border-radius: 10px;
 	padding: 10px;
+    opacity: 0.9;
 }
+
 
 /* Error Message States */
 .seo-editor-error-too-short:hover .seo-editor-message-too-short {
@@ -40,4 +42,26 @@
 }
 .seo-editor-error-duplicate:hover .seo-editor-message-duplicate {
 	display: block;
+}
+
+.seo-editor-error-too-short:hover .seo-editor-message-too-short:hover {
+	display: none;
+}
+.seo-editor-error-too-long:hover .seo-editor-message-too-long:hover {
+	display: none;
+}
+.seo-editor-error-duplicate:hover .seo-editor-message-duplicate:hover {
+	display: none;
+}
+
+#SeoEditorCharCounter {
+    position: fixed;
+    bottom: 0;
+    right: 25px;
+    background: #373737;
+    z-index: 99;
+    padding: 5px 10px;
+    color: #fff;
+    opacity: 0.7;
+    border-radius: 10px;
 }
