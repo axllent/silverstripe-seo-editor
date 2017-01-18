@@ -55,26 +55,29 @@ class SEOEditorAdmin extends ModelAdmin
         $context = parent::getSearchContext();
 
         $fields = FieldList::create(
+            TextField::create('MenuTitle', 'Menu Title'),
             TextField::create('Title', 'Title'),
-            TextField::create('MetaTitle', 'MetaTitle'),
             TextField::create('MetaDescription', 'MetaDescription'),
             CheckboxField::create('DuplicatesOnly', 'Duplicates Only'),
-            CheckboxField::create('RemoveEmptyMetaTitles', 'Remove Empty MetaTitles'),
             CheckboxField::create('RemoveEmptyMetaDescriptions', 'Remove Empty MetaDescriptions')
         );
 
         $context->setFields($fields);
         $filters = array(
+            'MenuTitle' => new PartialMatchFilter('MenuTitle'),
             'Title' => new PartialMatchFilter('Title'),
-            'MetaTitle' => new PartialMatchFilter('MetaTitle'),
             'MetaDescription' => new PartialMatchFilter('MetaDescription')
         );
 
         $context->setFilters($filters);
 
         // Namespace fields, for easier detection if a search is present
-        foreach ($context->getFields() as $field) $field->setName(sprintf('q[%s]', $field->getName()));
-        foreach ($context->getFilters() as $filter) $filter->setFullName(sprintf('q[%s]', $filter->getFullName()));
+        foreach ($context->getFields() as $field) {
+            $field->setName(sprintf('q[%s]', $field->getName()));
+        }
+        foreach ($context->getFilters() as $filter) {
+            $filter->setFullName(sprintf('q[%s]', $filter->getFullName()));
+        }
 
         return $context;
     }
@@ -100,7 +103,7 @@ class SEOEditorAdmin extends ModelAdmin
             $config->getComponentByType('GridFieldDataColumns')->setDisplayFields(
                 array(
                     'ID' => 'ID',
-                    'Title' => 'Title',
+                    'SEOEditorMenuTitle' => 'Page',
                 )
             );
 
@@ -110,7 +113,6 @@ class SEOEditorAdmin extends ModelAdmin
                     array(
                         'ID' => 'ID',
                         'Title' => 'Title',
-                        'MetaTitle' => 'MetaTitle',
                         'MetaDescription' => 'MetaDescription'
                     )
                 )
@@ -118,7 +120,6 @@ class SEOEditorAdmin extends ModelAdmin
 
             $config->addComponent(new SEOEditorMetaTitleColumn());
             $config->addComponent(new SEOEditorMetaDescriptionColumn());
-
         }
 
         return $form;
@@ -132,9 +133,9 @@ class SEOEditorAdmin extends ModelAdmin
         $form = parent::ImportForm();
         $modelName = $this->modelClass;
 
-        if ($form) {        
+        if ($form) {
             $form->Fields()->removeByName("SpecFor{$modelName}");
-            $form->Fields()->removeByName("EmptyBeforeImport");
+            $form->Fields()->removeByName('EmptyBeforeImport');
         }
 
         return $form;
@@ -150,10 +151,6 @@ class SEOEditorAdmin extends ModelAdmin
         $list = parent::getList();
         $params = $this->request->requestVar('q');
 
-        if (isset($params['RemoveEmptyMetaTitles']) && $params['RemoveEmptyMetaTitles']) {
-            $list = $this->removeEmptyAttributes($list, 'MetaTitle');
-        }
-
         if (isset($params['RemoveEmptyMetaDescriptions']) && $params['RemoveEmptyMetaDescriptions']) {
             $list = $this->removeEmptyAttributes($list, 'MetaDescription');
         }
@@ -163,6 +160,8 @@ class SEOEditorAdmin extends ModelAdmin
         if (isset($params['DuplicatesOnly']) && $params['DuplicatesOnly']) {
             $list = $list->filter('IsDuplicate', true);
         }
+
+        $list = $list->exclude('ClassName', $this->config()->ignore_page_types); // remove error pages etc
 
         $list = $list->sort('ID');
 
@@ -177,7 +176,7 @@ class SEOEditorAdmin extends ModelAdmin
      */
     private function markDuplicates($list)
     {
-        $duplicates = $this->findDuplicates($list, 'MetaTitle')->map('ID', 'ID')->toArray();
+        $duplicates = $this->findDuplicates($list, 'Title')->map('ID', 'ID')->toArray();
         $duplicateList = new ArrayList();
 
         foreach ($list as $item) {
@@ -252,7 +251,7 @@ class SEOEditorAdmin extends ModelAdmin
         if (!count($emptyAttributess)) {
             return $list;
         }
-        
+
         return $list->filter(
             array(
                 'ID:not' => array_keys(
@@ -264,6 +263,4 @@ class SEOEditorAdmin extends ModelAdmin
             )
         );
     }
-
-
 }

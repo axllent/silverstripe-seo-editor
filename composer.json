@@ -1,5 +1,5 @@
 {
-    "name": "littlegiant/silverstripe-seo-editor",
+    "name": "axllent/silverstripe-seo-editor",
     "type": "silverstripe-module",
     "description": "SEO Editor Administration for SilverStripe",
     "keywords": ["silverstripe", "seo", "editing", "metatitle", "metadescription"],
@@ -8,11 +8,17 @@
         {
             "name": "Stevie Mayhew",
             "email": "stevie.mayhew@littlegiant.co.nz"
+        },
+        {
+            "name": "Ralph Slooten",
+            "email": "axllent@gmail.com"
         }
     ],
     "require": {
         "silverstripe/framework": "~3.1",
-        "silverstripe/cms": "~3.1",
-        "kinglozzer/metatitle": "~1.0"
+        "silverstripe/cms": "~3.1"
+    },
+    "conflict": {
+        "littlegiant/silverstripe-seo-editor": "*"
     }
 }

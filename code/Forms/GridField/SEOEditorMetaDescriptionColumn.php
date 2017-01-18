@@ -66,6 +66,7 @@ class SEOEditorMetaDescriptionColumn extends GridFieldDataColumns implements
     public function getColumnContent($gridField, $record, $columnName)
     {
         $field = new TextareaField('MetaDescription');
+        $field->setRows(4);
         $value = $gridField->getDataFieldValue($record, $columnName);
         $value = $this->formatValue($gridField, $record, $columnName, $value);
         $field->setName($this->getFieldName($field->getName(), $gridField, $record));
@@ -85,7 +86,7 @@ class SEOEditorMetaDescriptionColumn extends GridFieldDataColumns implements
     public function getColumnMetadata($gridField, $column)
     {
         return array(
-            'title' => 'MetaDescription',
+            'title' => 'Meta Description',
         );
     }
 
@@ -97,9 +98,14 @@ class SEOEditorMetaDescriptionColumn extends GridFieldDataColumns implements
      */
     public function getErrors(DataObject $record)
     {
+        return self::getDynamicErrors($record);
+    }
+
+    public static function getDynamicErrors(DataObject $record)
+    {
         $errors = array();
 
-        if (strlen($record->MetaDescription) < 10) {
+        if (strlen($record->MetaDescription) < 50) {
             $errors[] = 'seo-editor-error-too-short';
         }
         if (strlen($record->MetaDescription) > 160) {
@@ -120,7 +126,7 @@ class SEOEditorMetaDescriptionColumn extends GridFieldDataColumns implements
     public function getErrorMessages()
     {
         return '<div class="seo-editor-errors">' .
-                '<span class="seo-editor-message seo-editor-message-too-short">This meta description is too short. It should be greater than 10 characters long.</span>' .
+                '<span class="seo-editor-message seo-editor-message-too-short">This meta description is too short. It should be greater than 50 characters long.</span>' .
                 '<span class="seo-editor-message seo-editor-message-too-long">This meta description is too long. It should be less than 160 characters long.</span>' .
                 '<span class="seo-editor-message seo-editor-message-duplicate">This meta description is a duplicate. It should be unique.</span>' .
             '</div>';
@@ -166,11 +172,12 @@ class SEOEditorMetaDescriptionColumn extends GridFieldDataColumns implements
     }
 
     /**
+     * Don't know why this is here - it doesn't seem to get used
      * @param $gridField
      * @param $request
      * @return string
      */
-    public function handleAction($gridField, $request)
+    /*public function handleAction($gridField, $request)
     {
         $data = $request->postVar($gridField->getName());
 
@@ -190,8 +197,9 @@ class SEOEditorMetaDescriptionColumn extends GridFieldDataColumns implements
         return json_encode(
             array(
                 'type' => 'bad',
-                'message' => 'An error occurred while saving'
+                'message' => 'An error occurred while saving',
+                'errors' => $this->getErrors($page)
             )
         );
-    }
+    }*/
 }

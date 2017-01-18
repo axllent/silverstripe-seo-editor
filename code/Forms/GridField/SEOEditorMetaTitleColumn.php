@@ -20,7 +20,7 @@ class SEOEditorMetaTitleColumn extends GridFieldDataColumns implements
      */
     public function augmentColumns($gridField, &$columns)
     {
-        $columns[] = 'MetaTitle';
+        $columns[] = 'Title';
     }
 
     /**
@@ -31,7 +31,7 @@ class SEOEditorMetaTitleColumn extends GridFieldDataColumns implements
      */
     public function getColumnsHandled($gridField)
     {
-        return array('MetaTitle');
+        return array('Title');
     }
 
     /**
@@ -62,7 +62,7 @@ class SEOEditorMetaTitleColumn extends GridFieldDataColumns implements
      */
     public function getColumnContent($gridField, $record, $columnName)
     {
-        $field = new TextField('MetaTitle');
+        $field = new TextField('Title');
         $value = $gridField->getDataFieldValue($record, $columnName);
         $value = $this->formatValue($gridField, $record, $columnName, $value);
         $field->setName($this->getFieldName($field->getName(), $gridField, $record));
@@ -82,27 +82,37 @@ class SEOEditorMetaTitleColumn extends GridFieldDataColumns implements
     public function getColumnMetadata($gridField, $column)
     {
         return array(
-            'title' => 'MetaTitle',
+            'title' => 'Meta Title',
         );
     }
 
     /**
-     * Get the errors which are specific to MetaTitle
+     * Get the errors which are specific to Title
      *
      * @param DataObject $record
      * @return array
      */
     public function getErrors(DataObject $record)
     {
+        return self::getDynamicErrors($record);
+    }
+
+    /* Allow us to statically generate errors as
+     * Ajax save doesn't distinguish between
+     * SEOEditorMetaTitleColumn & SEOEditorMetaDescriptionColumn
+     * so everything routes through this class
+     */
+    public static function getDynamicErrors(DataObject $record)
+    {
         $errors = array();
 
-        if (strlen($record->MetaTitle) < 10) {
+        if (strlen($record->Title) < 10) {
             $errors[] = 'seo-editor-error-too-short';
         }
-        if (strlen($record->MetaTitle) > 55) {
+        if (strlen($record->Title) > 55) {
             $errors[] = 'seo-editor-error-too-long';
         }
-        if (strlen(SiteTree::get()->filter('MetaTitle', $record->MetaTitle)->count() > 1)) {
+        if (strlen(SiteTree::get()->filter('Title', $record->Title)->count() > 1)) {
             $errors[] = 'seo-editor-error-duplicate';
         }
 
@@ -116,12 +126,11 @@ class SEOEditorMetaTitleColumn extends GridFieldDataColumns implements
      */
     public function getErrorMessages()
     {
-            return '<div class="seo-editor-errors">' .
-                        '<span class="seo-editor-message seo-editor-message-too-short">This title is too short. It should be greater than 10 characters long.</span>' .
-                        '<span class="seo-editor-message seo-editor-message-too-long">This title is too long. It should be less than 55 characters long.</span>' .
-                        '<span class="seo-editor-message seo-editor-message-duplicate">This title is a duplicate. It should be unique.</span>' .
-                    '</div>'
-                ;
+        return '<div class="seo-editor-errors">' .
+                    '<span class="seo-editor-message seo-editor-message-too-short">This title is too short. It should be greater than 10 characters long.</span>' .
+                    '<span class="seo-editor-message seo-editor-message-too-long">This title is too long. It should be less than 55 characters long.</span>' .
+                    '<span class="seo-editor-message seo-editor-message-duplicate">This title is a duplicate. It should be unique.</span>' .
+                '</div>';
     }
 
     /**
@@ -174,20 +183,59 @@ class SEOEditorMetaTitleColumn extends GridFieldDataColumns implements
         foreach ($data as $id => $params) {
             $page = $gridField->getList()->byId((int)$id);
 
+            $errors = [];
+
             foreach ($params as $fieldName => $val) {
+                $val = trim(preg_replace('/\s+/', ' ', $val));
                 $sqlValue = Convert::raw2sql($val);
                 $page->$fieldName = $sqlValue;
+
+                /* Make sure the MenuTitle remains unchanged! */
+                if ($fieldName == 'Title') {
+                    if (!$val) {
+                        return json_encode(
+                            array(
+                                'type' => 'bad',
+                                'message' => 'Meta Title cannot be blank',
+                                'errors' => array('seo-editor-error-too-short')
+                            )
+                        );
+                    }
+                    $query = DB::query("SELECT MenuTitle, Title FROM SiteTree WHERE ID = {$page->ID}");
+                    foreach ($query as $row) {
+                        $menuTitle = '\'' . Convert::raw2sql($row['MenuTitle']) . '\'';
+                        if (is_null($row['MenuTitle'])) {
+                            $menuTitle = '\'' . Convert::raw2sql($row['Title']) . '\'';
+                        }
+                        if ($menuTitle == '\'' . $sqlValue . '\'') { // set back to NULL
+                            $menuTitle = 'NULL';
+                        }
+
+                        DB::query("UPDATE SiteTree SET MenuTitle = " . $menuTitle . " WHERE ID = {$page->ID}");
+                        if ($page->isPublished()) {
+                            DB::query("UPDATE SiteTree_Live SET MenuTitle = " . $menuTitle . " WHERE ID = {$page->ID}");
+                        }
+                    }
+                }
+
+                /* Update MetaTitle / MetaDescription */
                 DB::query("UPDATE SiteTree SET {$fieldName} = '{$sqlValue}' WHERE ID = {$page->ID}");
                 if ($page->isPublished()) {
                     DB::query("UPDATE SiteTree_Live SET {$fieldName} = '{$sqlValue}' WHERE ID = {$page->ID}");
+                }
+
+                if ($fieldName == 'Title') {
+                    $errors = self::getDynamicErrors($page);
+                } elseif ($fieldName == 'MetaDescription') {
+                    $errors = SEOEditorMetaDescriptionColumn::getDynamicErrors($page);
                 }
             }
 
             return json_encode(
                 array(
                     'type' => 'good',
-                    'message' => $fieldName . ' saved',
-                    'errors' => $this->getErrors($page)
+                    'message' => $fieldName . ' saved (' . strlen($val) . ' chars)',
+                    'errors' => $errors
                 )
             );
         }

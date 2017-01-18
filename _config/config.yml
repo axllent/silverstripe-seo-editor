@@ -1,0 +1,5 @@
+SEOEditorAdmin:
+  ignore_page_types:
+    - ErrorPage
+    - RedirectorPage
+    - VirtualPage

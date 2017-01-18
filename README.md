@@ -1,23 +1,38 @@
 # SilverStripe SEO Editor
 
-SEO Editor interface to allow easy editing of SEO MetaTitle and MetaDescriptions for pages within a ModelAdmin
-interface.
+SEO Editor interface to allow easy editing of SEO Title and MetaDescriptions for pages within a ModelAdmin interface.
 
 Edit inline, or download a CSV export and import changes.
 
-![SilverStripe SEO Editor](https://raw.github.com/little-giant/silverstripe-seo-editor/master/images/preview.jpg)
+This module is based on the original [littlegiant/silverstripe-seo-editor](https://github.com/littlegiant/silverstripe-seo-editor),
+however adapted to suit different requirements. This module focuses on the default `Title` and `MetaDescription` fields, and
+takes into consideration the current MenuTitle field (as not to change it with a change to the Title).
+
+![SilverStripe SEO Editor](https://raw.github.com/axllent/silverstripe-seo-editor/master/images/preview.jpg)
 
 ## Installation
 
 Installation via composer
 
 ```bash
-$ composer require littlegiant/silverstripe-seo-editor
+$ composer require axllent/silverstripe-seo-editor
+```
+
+## Configuration
+
+You can optionally specify pagetypes to be ignored in the SEO editor. Simply create a yml file in the following format (the example below is the default):
+
+```
+SEOEditorAdmin:
+  ignore_page_types:
+    - ErrorPage
+    - RedirectorPage
+    - VirtualPage
 ```
 
 ## License
 
-SilverStripe SEO  is released under the MIT license
+SilverStripe SEO is released under the MIT license
 
 ## Contributing
 

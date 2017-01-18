@@ -1,25 +1,23 @@
-(function ($) {
+(function($) {
 
-    $.entwine('ss', function ($) {
+    $.entwine('ss', function($) {
 
         $('.ss-seo-editor .ss-gridfield-item input, .ss-seo-editor .ss-gridfield-item textarea').entwine({
 
-            onchange: function () {
+            onchange: function() {
 
-                // kill the popup for form changes
-                window.onbeforeunload = null;
+                // prevent changes to the form / popup
+                $('.cms-edit-form').removeClass('changed');
 
                 var $this = $(this);
                 var id = $this.closest('tr').attr('data-id');
                 var url = $this.closest('.ss-gridfield').attr('data-url') + "/update/" + id;
                 var data = $this.attr('name') + '=' + $(this).val();
 
-                statusMessage('Saving changes', 'good');
-
                 $.post(
                     url,
                     data,
-                    function (data, textStatus) {
+                    function(data, textStatus) {
                         statusMessage(data.message, data.type);
 
                         $this.closest('td').removeClass();
