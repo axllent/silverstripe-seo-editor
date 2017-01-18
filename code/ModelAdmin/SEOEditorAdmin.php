@@ -55,8 +55,7 @@ class SEOEditorAdmin extends ModelAdmin
         $context = parent::getSearchContext();
 
         $fields = FieldList::create(
-            TextField::create('MenuTitle', 'Menu Title'),
-            TextField::create('Title', 'Title'),
+            TextField::create('Title', 'Meta Title'),
             TextField::create('MetaDescription', 'Meta Description'),
             CheckboxField::create('DuplicatesOnly', 'Duplicates Only'),
             CheckboxField::create('RemoveEmptyMetaDescriptions', 'Remove Empty MetaDescriptions')
@@ -64,7 +63,6 @@ class SEOEditorAdmin extends ModelAdmin
 
         $context->setFields($fields);
         $filters = array(
-            'MenuTitle' => new PartialMatchFilter('MenuTitle'),
             'Title' => new PartialMatchFilter('Title'),
             'MetaDescription' => new PartialMatchFilter('MetaDescription')
         );
@@ -172,7 +170,7 @@ class SEOEditorAdmin extends ModelAdmin
      * @param SS_List $list
      * @return SS_List
      */
-    private function filterDuplicates($list)
+    private function filterDuplicates(SS_List $list)
     {
         $duplicateList = new ArrayList();
 
@@ -206,7 +204,7 @@ class SEOEditorAdmin extends ModelAdmin
 
         $duplicates = array_values(
             array_unique(
-                array_diff_key($pageAttributes, array_unique($pageAttributes))
+                array_diff_key($pageAttributes , array_unique($pageAttributes))
             )
         );
 
