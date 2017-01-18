@@ -112,7 +112,7 @@ class SEOEditorMetaTitleColumn extends GridFieldDataColumns implements
         if (strlen($record->Title) > 55) {
             $errors[] = 'seo-editor-error-too-long';
         }
-        if (strlen(SiteTree::get()->filter('Title', $record->Title)->count() > 1)) {
+        if ($record->Title && SiteTree::get()->filter('Title', $record->Title)->count() > 1) {
             $errors[] = 'seo-editor-error-duplicate';
         }
 

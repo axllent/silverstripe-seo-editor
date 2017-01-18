@@ -57,7 +57,7 @@ class SEOEditorAdmin extends ModelAdmin
         $fields = FieldList::create(
             TextField::create('MenuTitle', 'Menu Title'),
             TextField::create('Title', 'Title'),
-            TextField::create('MetaDescription', 'MetaDescription'),
+            TextField::create('MetaDescription', 'Meta Description'),
             CheckboxField::create('DuplicatesOnly', 'Duplicates Only'),
             CheckboxField::create('RemoveEmptyMetaDescriptions', 'Remove Empty MetaDescriptions')
         );
@@ -155,10 +155,8 @@ class SEOEditorAdmin extends ModelAdmin
             $list = $this->removeEmptyAttributes($list, 'MetaDescription');
         }
 
-        $list = $this->markDuplicates($list);
-
         if (isset($params['DuplicatesOnly']) && $params['DuplicatesOnly']) {
-            $list = $list->filter('IsDuplicate', true);
+            $list = $this->filterDuplicates($list);
         }
 
         $list = $list->exclude('ClassName', $this->config()->ignore_page_types); // remove error pages etc
@@ -169,35 +167,29 @@ class SEOEditorAdmin extends ModelAdmin
     }
 
     /**
-     * Mark duplicate attributes
+     * Return only duplicate items
      *
      * @param SS_List $list
      * @return SS_List
      */
-    private function markDuplicates($list)
+    private function filterDuplicates($list)
     {
-        $duplicates = $this->findDuplicates($list, 'Title')->map('ID', 'ID')->toArray();
         $duplicateList = new ArrayList();
 
+        $duplicate_ids = $this->findDuplicates($list, 'Title');
         foreach ($list as $item) {
-            if (in_array($item->ID, $duplicates)) {
-                $item->IsDuplicate = true;
+            if (in_array($item->ID, $duplicate_ids)) {
                 $duplicateList->push($item);
             }
         }
 
-        $duplicates = $this->findDuplicates($list, 'MetaDescription')->map('ID', 'ID')->toArray();
+        $duplicate_ids = $this->findDuplicates($list, 'MetaDescription');
         foreach ($list as $item) {
-            if (in_array($item->ID, $duplicates)) {
-                $item->IsDuplicate = true;
-                if (!$list->byID($item->ID)) {
-                    $duplicateList->push($item);
-                }
+            if (in_array($item->ID, $duplicate_ids) && !$duplicateList->byID($item->ID)) {
+                $duplicateList->push($item);
             }
         }
 
-        $duplicateList->merge($list);
-        $duplicateList->removeDuplicates();
         return $duplicateList;
     }
 
@@ -212,25 +204,25 @@ class SEOEditorAdmin extends ModelAdmin
     {
         $pageAttributes = $list->map('ID', $type)->toArray();
 
-        $potentialDuplicateAttributes = array_unique(
-            array_diff_assoc(
-                $pageAttributes,
-                array_unique($pageAttributes)
+        $duplicates = array_values(
+            array_unique(
+                array_diff_key($pageAttributes, array_unique($pageAttributes))
             )
         );
-        $duplicateAttributes = array_filter($pageAttributes, function ($value) use ($potentialDuplicateAttributes) {
-            return in_array($value, $potentialDuplicateAttributes);
-        });
 
-        if (!count($duplicateAttributes)) {
-            return $list;
+        $duplicateAttributes = [];
+
+        foreach ($pageAttributes as $id => $val) {
+            if (in_array($val, $duplicates)) {
+                array_push($duplicateAttributes, $id);
+            }
         }
 
-        return $list->filter(
-            array(
-                'ID' => array_keys($duplicateAttributes),
-            )
-        );
+        if (!count($duplicateAttributes)) {
+            return [];
+        }
+
+        return $duplicateAttributes;
     }
 
     /**

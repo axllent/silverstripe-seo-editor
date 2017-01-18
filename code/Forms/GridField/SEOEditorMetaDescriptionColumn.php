@@ -111,7 +111,7 @@ class SEOEditorMetaDescriptionColumn extends GridFieldDataColumns implements
         if (strlen($record->MetaDescription) > 160) {
             $errors[] = 'seo-editor-error-too-long';
         }
-        if (strlen(SiteTree::get()->filter('MetaDescription', $record->MetaDescription)->count() > 1)) {
+        if ($record->MetaDescription && SiteTree::get()->filter('MetaDescription', $record->MetaDescription)->count() > 1) {
             $errors[] = 'seo-editor-error-duplicate';
         }
 
@@ -170,36 +170,4 @@ class SEOEditorMetaDescriptionColumn extends GridFieldDataColumns implements
             'update/$ID' => 'handleAction',
         );
     }
-
-    /**
-     * Don't know why this is here - it doesn't seem to get used
-     * @param $gridField
-     * @param $request
-     * @return string
-     */
-    /*public function handleAction($gridField, $request)
-    {
-        $data = $request->postVar($gridField->getName());
-
-        foreach ($data as $id => $params) {
-            $page = $gridField->getList()->byId((int)$id);
-
-            foreach ($params as $fieldName => $val) {
-                $sqlValue = Convert::raw2sql($val);
-                $page->$fieldName = $sqlValue;
-                DB::query("UPDATE SiteTree SET {$fieldName} = '{$sqlValue}' WHERE ID = {$page->ID}");
-                if ($page->isPublished()) {
-                    DB::query("UPDATE SiteTree_Live SET {$fieldName} = '{$sqlValue}' WHERE ID = {$page->ID}");
-                }
-            }
-        }
-
-        return json_encode(
-            array(
-                'type' => 'bad',
-                'message' => 'An error occurred while saving',
-                'errors' => $this->getErrors($page)
-            )
-        );
-    }*/
 }
