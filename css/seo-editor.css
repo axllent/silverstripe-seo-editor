@@ -2,6 +2,14 @@
 	max-width: 100px;
 }
 
+.cms table.ss-gridfield-table input {
+    min-width: 250px;
+}
+
+.cms table.ss-gridfield-table textarea {
+    min-width: 250px;
+}
+
 .seo-editor-valid {
 	background-color: #70AE6E;
 }
@@ -14,7 +22,6 @@
 .seo-editor-error:hover {
 	background-color: #f2a1a2;
 }
-
 
 .seo-editor-errors {
 	position: absolute;
@@ -32,7 +39,6 @@
     opacity: 0.9;
 }
 
-
 /* Error Message States */
 .seo-editor-error-too-short:hover .seo-editor-message-too-short {
 	display: block;
@@ -43,7 +49,6 @@
 .seo-editor-error-duplicate:hover .seo-editor-message-duplicate {
 	display: block;
 }
-
 .seo-editor-error-too-short:hover .seo-editor-message-too-short:hover {
 	display: none;
 }
