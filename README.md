@@ -30,11 +30,15 @@ SEOEditorAdmin:
     - VirtualPage
 ```
 
+## Requirements
+
+SilverStripe CMS ~3.1
+
+
 ## License
 
 SilverStripe SEO is released under the MIT license
 
-## Contributing
 
 ### Code guidelines
 
