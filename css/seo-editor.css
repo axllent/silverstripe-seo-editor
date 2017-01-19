@@ -2,11 +2,11 @@
 	max-width: 100px;
 }
 
-.cms table.ss-gridfield-table input {
+.cms .ss-gridfield-item input {
     min-width: 250px;
 }
 
-.cms table.ss-gridfield-table textarea {
+.cms .ss-gridfield-item textarea {
     min-width: 250px;
 }
 
