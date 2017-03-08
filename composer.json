@@ -5,15 +5,11 @@
     "keywords": ["silverstripe", "seo", "editing", "metatitle", "metadescription"],
     "license": "MIT",
     "authors": [
-        {
-            "name": "Stevie Mayhew",
-            "email": "stevie.mayhew@littlegiant.co.nz"
-        },
-        {
-            "name": "Ralph Slooten",
-            "email": "axllent@gmail.com"
-        }
-    ],
+		{
+			"name": "Ralph Slooten",
+			"homepage": "http://www.axllent.org/"
+		}
+	],
     "require": {
         "silverstripe/framework": "~3.1",
         "silverstripe/cms": "~3.1"
