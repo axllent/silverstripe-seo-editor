@@ -8,6 +8,7 @@
 
 .cms .ss-gridfield-item textarea {
     min-width: 250px;
+	height: 65px;
 }
 
 .seo-editor-valid {
