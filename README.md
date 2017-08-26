@@ -1,4 +1,4 @@
-# SilverStripe 3 SEO Editor
+# SEO Editor for SilverStripe 3
 
 **For SilverStripe 4, please use [axllent/silverstripe-meta-editor](https://github.com/axllent/silverstripe-meta-editor)**
 
