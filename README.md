@@ -1,4 +1,6 @@
-# SilverStripe SEO Editor
+# SilverStripe 3 SEO Editor
+
+**For SilverStripe 4, please use [axllent/silverstripe-meta-editor](https://github.com/axllent/silverstripe-meta-editor)**
 
 SEO Editor interface to allow easy editing of page Titles and Meta Descriptions for pages within a ModelAdmin interface.
 
@@ -9,6 +11,7 @@ however adapted to suit different requirements. This module focuses on the stand
 takes into consideration the current `MenuTitle` field (as not to change the menu title when you change the page title).
 
 ![SilverStripe SEO Editor](https://raw.github.com/axllent/silverstripe-seo-editor/master/images/preview.jpg)
+
 
 ## Installation
 
@@ -32,7 +35,7 @@ SEOEditorAdmin:
 
 ## Requirements
 
-SilverStripe CMS ~3.1
+SilverStripe CMS ^3.1
 
 
 ## License
