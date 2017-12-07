@@ -5,7 +5,6 @@
  */
 class SEOEditorMenuTitleExt extends SiteTreeExtension
 {
-
     public function getSEOEditorMenuTitle()
     {
         return DBField::create_field(
@@ -14,5 +13,4 @@ class SEOEditorMenuTitleExt extends SiteTreeExtension
             'URL: <a href="' . $this->owner->Link() . '" target="_blank">' . convert::raw2xml($this->owner->Link()) . '</a>'
         );
     }
-
 }

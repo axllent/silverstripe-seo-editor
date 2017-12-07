@@ -32,7 +32,6 @@ class SEOEditorCSVLoader extends CsvBulkLoader
 
         foreach ($record as $fieldName => $val) {
             if ($fieldName == 'Title' || $fieldName == 'MetaDescription') {
-
                 $val = trim(preg_replace('/\s+/', ' ', $val));
                 $sqlValue = Convert::raw2sql($val);
 
@@ -48,9 +47,9 @@ class SEOEditorCSVLoader extends CsvBulkLoader
                             $menuTitle = 'NULL';
                         }
 
-                        DB::query("UPDATE SiteTree SET MenuTitle = " . $menuTitle . " WHERE ID = {$page->ID}");
+                        DB::query('UPDATE SiteTree SET MenuTitle = ' . $menuTitle . " WHERE ID = {$page->ID}");
                         if ($page->isPublished()) {
-                            DB::query("UPDATE SiteTree_Live SET MenuTitle = " . $menuTitle . " WHERE ID = {$page->ID}");
+                            DB::query('UPDATE SiteTree_Live SET MenuTitle = ' . $menuTitle . " WHERE ID = {$page->ID}");
                         }
                     }
                 }
@@ -64,5 +63,4 @@ class SEOEditorCSVLoader extends CsvBulkLoader
 
         return $page->ID;
     }
-
 }

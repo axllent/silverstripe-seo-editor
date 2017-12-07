@@ -31,6 +31,10 @@ SEOEditorAdmin:
     - ErrorPage
     - RedirectorPage
     - VirtualPage
+  meta_title_min_length: 20
+  meta_title_max_length: 70
+  meta_description_min_length: 100
+  meta_description_max_length: 200
 ```
 
 ## Requirements

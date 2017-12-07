@@ -101,14 +101,33 @@ class SEOEditorMetaDescriptionColumn extends GridFieldDataColumns implements
         return self::getDynamicErrors($record);
     }
 
+    public static $min_length;
+    public static function getMinLength()
+    {
+        if (!self::$min_length) {
+            self::$min_length = Config::inst()->get('SEOEditorAdmin', 'meta_description_min_length');
+        }
+        return self::$min_length;
+    }
+
+    public static $max_length;
+    public static function getMaxLength()
+    {
+        if (!self::$max_length) {
+            self::$max_length = Config::inst()->get('SEOEditorAdmin', 'meta_description_max_length');
+        }
+        return self::$max_length;
+    }
+
+
     public static function getDynamicErrors(DataObject $record)
     {
         $errors = array();
 
-        if (strlen($record->MetaDescription) < 50) {
+        if (strlen($record->MetaDescription) < self::getMinLength()) {
             $errors[] = 'seo-editor-error-too-short';
         }
-        if (strlen($record->MetaDescription) > 160) {
+        if (strlen($record->MetaDescription) > self::getMaxLength()) {
             $errors[] = 'seo-editor-error-too-long';
         }
         if ($record->MetaDescription && SiteTree::get()->filter('MetaDescription', $record->MetaDescription)->count() > 1) {
@@ -126,8 +145,8 @@ class SEOEditorMetaDescriptionColumn extends GridFieldDataColumns implements
     public function getErrorMessages()
     {
         return '<div class="seo-editor-errors">' .
-            '<span class="seo-editor-message seo-editor-message-too-short">This meta description is too short. It should be greater than 50 characters long.</span>' .
-            '<span class="seo-editor-message seo-editor-message-too-long">This meta description is too long. It should be less than 160 characters long.</span>' .
+            '<span class="seo-editor-message seo-editor-message-too-short">This meta description is too short. It should be greater than ' . self::getMinLength() . ' characters long.</span>' .
+            '<span class="seo-editor-message seo-editor-message-too-long">This meta description is too long. It should be less than ' . self::getMaxLength() . ' characters long.</span>' .
             '<span class="seo-editor-message seo-editor-message-duplicate">This meta description is a duplicate. It should be unique.</span>' .
         '</div>';
     }
@@ -152,7 +171,10 @@ class SEOEditorMetaDescriptionColumn extends GridFieldDataColumns implements
     protected function getFieldName($name, GridField $gridField, DataObjectInterface $record)
     {
         return sprintf(
-            '%s[%s][%s]', $gridField->getName(), $record->ID, $name
+            '%s[%s][%s]',
+            $gridField->getName(),
+            $record->ID,
+            $name
         );
     }
 

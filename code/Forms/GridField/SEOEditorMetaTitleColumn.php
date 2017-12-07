@@ -8,7 +8,6 @@ class SEOEditorMetaTitleColumn extends GridFieldDataColumns implements
     GridField_HTMLProvider,
     GridField_URLHandler
 {
-
     /**
      * Modify the list of columns displayed in the table.
      *
@@ -97,6 +96,24 @@ class SEOEditorMetaTitleColumn extends GridFieldDataColumns implements
         return self::getDynamicErrors($record);
     }
 
+    public static $min_length;
+    public static function getMinLength()
+    {
+        if (!self::$min_length) {
+            self::$min_length = Config::inst()->get('SEOEditorAdmin', 'meta_title_min_length');
+        }
+        return self::$min_length;
+    }
+
+    public static $max_length;
+    public static function getMaxLength()
+    {
+        if (!self::$max_length) {
+            self::$max_length = Config::inst()->get('SEOEditorAdmin', 'meta_title_max_length');
+        }
+        return self::$max_length;
+    }
+
     /* Allow us to statically generate errors as
      * Ajax save doesn't distinguish between
      * SEOEditorMetaTitleColumn & SEOEditorMetaDescriptionColumn
@@ -106,10 +123,10 @@ class SEOEditorMetaTitleColumn extends GridFieldDataColumns implements
     {
         $errors = array();
 
-        if (strlen($record->Title) < 10) {
+        if (strlen($record->Title) < self::getMinLength()) {
             $errors[] = 'seo-editor-error-too-short';
         }
-        if (strlen($record->Title) > 55) {
+        if (strlen($record->Title) > self::getMaxLength()) {
             $errors[] = 'seo-editor-error-too-long';
         }
         if ($record->Title && SiteTree::get()->filter('Title', $record->Title)->count() > 1) {
@@ -127,8 +144,8 @@ class SEOEditorMetaTitleColumn extends GridFieldDataColumns implements
     public function getErrorMessages()
     {
         return '<div class="seo-editor-errors">' .
-            '<span class="seo-editor-message seo-editor-message-too-short">This title is too short. It should be greater than 10 characters long.</span>' .
-            '<span class="seo-editor-message seo-editor-message-too-long">This title is too long. It should be less than 55 characters long.</span>' .
+            '<span class="seo-editor-message seo-editor-message-too-short">This title is too short. It should be greater than ' . self::getMinLength() . ' characters long.</span>' .
+            '<span class="seo-editor-message seo-editor-message-too-long">This title is too long. It should be less than ' . self::getMaxLength() . ' characters long.</span>' .
             '<span class="seo-editor-message seo-editor-message-duplicate">This title is a duplicate. It should be unique.</span>' .
         '</div>';
     }

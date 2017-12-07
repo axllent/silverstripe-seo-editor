@@ -5,22 +5,23 @@
  */
 class SEOEditorAdmin extends ModelAdmin
 {
+    /**
+     * @config
+     */
+    public static $meta_title_min_length = 20;
 
-    /**
-     * @var string
-     */
+    public static $meta_title_max_length = 70;
+
+    public static $meta_description_min_length = 100;
+
+    public static $meta_description_max_length = 200;
+
     private static $menu_title = 'SEO Editor';
-    /**
-     * @var string
-     */
+
     private static $url_segment = 'seo-editor';
-    /**
-     * @var string
-     */
+
     private static $menu_icon = 'silverstripe-seo-editor/images/seo-editor-icon.png';
-    /**
-     * @var array
-     */
+
     private static $managed_models = array(
         'SiteTree'
     );
