@@ -5,7 +5,7 @@ Notable changes to this project will be documented in this file.
 ## [1.1.0]
 
 - Add yaml configuration for meta_title_[min|max]_length & meta_description_[min|max]_length
-- Update default min/max lenghts to 20/70 (title) and 100/200 (description)
+- Update default min/max lengths to 20/70 (title) and 100/200 (description)
 
 
 ## [1.0.3]
