@@ -5,7 +5,6 @@ Notable changes to this project will be documented in this file.
 ## [1.1.1]
 
 - Add more flexible search (MenuTitle / Title)
--
 
 
 ## [1.1.0]
