@@ -59,7 +59,7 @@ class SEOEditorAdmin extends ModelAdmin
             TextField::create('SearchTitle', 'Page Name or Meta Title'),
             TextField::create('MetaDescription', 'Meta Description'),
             CheckboxField::create('DuplicatesOnly', 'Duplicates Only'),
-            CheckboxField::create('RemoveEmptyMetaDescriptions', 'Remove Empty MetaDescriptions')
+            CheckboxField::create('RemoveEmptyMetaDescriptions', 'Remove Empty Meta Descriptions')
         );
 
         $context->setFields($fields);
