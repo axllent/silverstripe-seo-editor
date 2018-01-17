@@ -2,6 +2,12 @@
 
 Notable changes to this project will be documented in this file.
 
+## [1.1.1]
+
+- Add more flexible search (MenuTitle / Title)
+-
+
+
 ## [1.1.0]
 
 - Add yaml configuration for meta_title_[min|max]_length & meta_description_[min|max]_length

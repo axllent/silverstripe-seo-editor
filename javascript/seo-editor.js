@@ -1,61 +1,57 @@
 (function($) {
 
-    function updateCounter(inpt) {
+	$.entwine('ss', function($) {
 
-    }
+		/* counter */
+		$("body").append($('<div id="SeoEditorCharCounter">hahaha</div>').hide());
 
-    $.entwine('ss', function($) {
+		$('.ss-seo-editor .ss-gridfield-item input, .ss-seo-editor .ss-gridfield-item textarea').entwine({
 
-        /* counter */
-        $("body").append($('<div id="SeoEditorCharCounter">hahaha</div>').hide());
+			onkeyup: function() {
+				$('#SeoEditorCharCounter').html($(this).val().length);
+			},
 
-        $('.ss-seo-editor .ss-gridfield-item input, .ss-seo-editor .ss-gridfield-item textarea').entwine({
+			onfocusin: function() {
+				$('#SeoEditorCharCounter').show();
+				$('#SeoEditorCharCounter').html($(this).val().length);
+			},
 
-            onkeyup: function() {
-                $('#SeoEditorCharCounter').html($(this).val().length);
-            },
+			onfocusout: function() {
+				$('#SeoEditorCharCounter').hide();
+			},
 
-            onfocusin: function() {
-                $('#SeoEditorCharCounter').show();
-                $('#SeoEditorCharCounter').html($(this).val().length);
-            },
+			onchange: function() {
 
-            onfocusout: function() {
-                $('#SeoEditorCharCounter').hide();
-            },
+				// prevent changes to the form / popup
+				$('.cms-edit-form').removeClass('changed');
 
-            onchange: function() {
+				var $this = $(this);
+				var id = $this.closest('tr').attr('data-id');
+				var url = $this.closest('.ss-gridfield').attr('data-url') + "/update/" + id;
+				var data = encodeURIComponent($this.attr('name')) + '=' + encodeURIComponent($(this).val());
 
-                // prevent changes to the form / popup
-                $('.cms-edit-form').removeClass('changed');
+				$.post(
+					url,
+					data,
+					function(data, textStatus) {
+						statusMessage(data.message, data.type);
 
-                var $this = $(this);
-                var id = $this.closest('tr').attr('data-id');
-                var url = $this.closest('.ss-gridfield').attr('data-url') + "/update/" + id;
-                var data = encodeURIComponent($this.attr('name')) + '=' + encodeURIComponent($(this).val());
+						$this.closest('td').removeClass();
+						if (data.errors.length) {
+							$this.closest('td').addClass('seo-editor-error');
+							data.errors.forEach(function(error) {
+								$this.closest('td').addClass(error)
+							});
+						} else {
+							$this.closest('td').addClass('seo-editor-valid');
+						}
 
-                $.post(
-                    url,
-                    data,
-                    function(data, textStatus) {
-                        statusMessage(data.message, data.type);
+					},
+					'json'
+				);
+			}
+		});
 
-                        $this.closest('td').removeClass();
-                        if (data.errors.length) {
-                            $this.closest('td').addClass('seo-editor-error');
-                            data.errors.forEach(function(error) {
-                                $this.closest('td').addClass(error)
-                            });
-                        } else {
-                            $this.closest('td').addClass('seo-editor-valid');
-                        }
-
-                    },
-                    'json'
-                );
-            }
-        });
-
-    });
+	});
 
 }(jQuery));
