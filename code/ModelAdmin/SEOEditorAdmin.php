@@ -56,7 +56,7 @@ class SEOEditorAdmin extends ModelAdmin
         $context = parent::getSearchContext();
 
         $fields = FieldList::create(
-            TextField::create('Title', 'Meta Title'),
+            TextField::create('SearchTitle', 'Page Name or Meta Title'),
             TextField::create('MetaDescription', 'Meta Description'),
             CheckboxField::create('DuplicatesOnly', 'Duplicates Only'),
             CheckboxField::create('RemoveEmptyMetaDescriptions', 'Remove Empty MetaDescriptions')
@@ -64,7 +64,6 @@ class SEOEditorAdmin extends ModelAdmin
 
         $context->setFields($fields);
         $filters = array(
-            'Title' => new PartialMatchFilter('Title'),
             'MetaDescription' => new PartialMatchFilter('MetaDescription')
         );
 
@@ -158,6 +157,13 @@ class SEOEditorAdmin extends ModelAdmin
             $list = $this->filterDuplicates($list);
         }
 
+        if (!empty($params['SearchTitle'])) {
+            $list = $list->filterAny([
+                'MenuTitle:PartialMatch' => $params['SearchTitle'],
+                'Title:PartialMatch' => $params['SearchTitle'],
+            ]);
+        }
+
         $list = $list->exclude('ClassName', $this->config()->ignore_page_types); // remove error pages etc
 
         $list = $list->sort('ID');
@@ -205,7 +211,7 @@ class SEOEditorAdmin extends ModelAdmin
 
         $duplicates = array_values(
             array_unique(
-                array_diff_key($pageAttributes , array_unique($pageAttributes))
+                array_diff_key($pageAttributes, array_unique($pageAttributes))
             )
         );
 
@@ -246,7 +252,9 @@ class SEOEditorAdmin extends ModelAdmin
         return $list->filter(
             array(
                 'ID:not' => array_keys(
-                    array_filter($emptyAttributess, function ($value) {
+                    array_filter(
+                        $emptyAttributess,
+                        function ($value) {
                             return $value == 1;
                         }
                     )
